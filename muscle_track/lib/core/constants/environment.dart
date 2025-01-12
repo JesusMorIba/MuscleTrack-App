@@ -7,4 +7,7 @@ class Environment {
 
   static String baseURL =
       dotenv.env['BASE_URL'] ?? 'BASE_URL is not configured';
+
+  static String cloudinaryURL =
+      dotenv.env['CLOUDINARY_URL'] ?? 'CLOUDINARY_URL is not configured';
 }

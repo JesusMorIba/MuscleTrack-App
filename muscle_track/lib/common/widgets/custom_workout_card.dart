@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:muscle_track/core/router/app_router_const.dart';
 import 'package:muscle_track/core/theme/app_colors.dart';
 
-class CustomWorkoutCard extends StatelessWidget {
+class CustomWorkoutCard extends StatefulWidget {
   final String title;
   final String duration;
   final String level;
@@ -16,48 +18,59 @@ class CustomWorkoutCard extends StatelessWidget {
   });
 
   @override
+  State<CustomWorkoutCard> createState() => _CustomWorkoutCardState();
+}
+
+class _CustomWorkoutCardState extends State<CustomWorkoutCard> {
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 382,
-      height: 142,
-      margin: const EdgeInsets.only(right: 16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        image: DecorationImage(
-          image: NetworkImage(imageUrl),
-          fit: BoxFit.cover,
-        ),
-      ),
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    return InkWell(
+      onTap: () {
+        context.pushNamed(workoutDetailRoute);
+      },
       child: Container(
+        width: screenWidth * 0.95,
+        height: 142,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          gradient: const LinearGradient(
-            colors: [AppColors.black, Colors.transparent],
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
+          image: DecorationImage(
+            image: NetworkImage(widget.imageUrl),
+            fit: BoxFit.cover,
           ),
         ),
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            gradient: const LinearGradient(
+              colors: [AppColors.black, Colors.transparent],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
             ),
-            Text(
-              "$duration • $level",
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 14,
+          ),
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-          ],
+              Text(
+                "${widget.duration} • ${widget.level}",
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

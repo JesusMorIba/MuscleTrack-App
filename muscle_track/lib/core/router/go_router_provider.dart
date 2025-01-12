@@ -6,6 +6,7 @@ import 'package:muscle_track/features/home/presentation/ui/home_screen.dart';
 import 'package:muscle_track/features/signup/presentation/ui/signup_screen.dart';
 import 'package:muscle_track/features/walk_through/presentation/ui/walk_through_screen.dart';
 import 'package:muscle_track/features/login/presentation/ui/login_screen.dart';
+import 'package:muscle_track/features/workout_detail/presentation/ui/workout_detail_screen.dart';
 
 import 'app_router_const.dart';
 
@@ -17,13 +18,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final isGoingToLogin = state.matchedLocation == '/login';
 
-      if (authState) {
-        if (isGoingToLogin) {
-          return '/home';
-        }
+      if (authState && isGoingToLogin) {
+        return '/home';
       }
 
-      return '/home';
+      if (!authState && state.matchedLocation != '/login') {
+        return '/login';
+      }
+
+      return null;
     },
     routes: [
       GoRoute(
@@ -50,6 +53,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/walkthrough',
         name: walkThroughRoute,
         builder: (context, state) => const WalkThroughScreen(),
+      ),
+      GoRoute(
+        path: '/workout_detail',
+        name: workoutDetailRoute,
+        builder: (context, state) => const WorkoutDetailScreen(),
       ),
     ],
   );
