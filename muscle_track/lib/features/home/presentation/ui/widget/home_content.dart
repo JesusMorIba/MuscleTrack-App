@@ -14,13 +14,13 @@ class HomeContent extends StatelessWidget {
         "title": "Full-Body HIIT Blast",
         "duration": "20 mins",
         "level": "Intermediate",
-        "imageUrl": "https://imgur.com/pPNGyli.png",
+        "imageUrl": "daily_exercise_routine_qeyazq",
       },
       {
         "title": "Daily Exercise",
         "duration": "16 mins",
         "level": "Beginner",
-        "imageUrl": "https://imgur.com/Uu6XzKT.png",
+        "imageUrl": "full_body_hiit_blast_mbol1j",
       },
     ];
 
@@ -66,7 +66,7 @@ class HomeContent extends StatelessWidget {
                   title: plan["title"] ?? "Untitled",
                   duration: plan["duration"] ?? "Unknown",
                   level: plan["level"] ?? "Unknown",
-                  imageUrl: plan["imageUrl"] ?? "",
+                  imageId: plan["imageUrl"] ?? "",
                 ),
                 const SizedBox(height: 16),
               ],
