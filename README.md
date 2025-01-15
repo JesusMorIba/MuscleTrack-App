@@ -11,18 +11,11 @@ Muscle Track es una aplicación móvil desarrollada en Flutter que combina tecno
 - **Riverpod**: Gestión de estado escalable y reactiva.
 - **flutter_localizations + intl**: Soporte multilenguaje para ofrecer una experiencia localizada.
 
-### Backend
-- **Node.js**: Entorno de ejecución para el backend.
-- **Express**: Framework para crear una API REST.
-- **MongoDB**: Base de datos NoSQL para almacenamiento de datos.
-- **JWT (JSON Web Tokens)**: Autenticación segura.
-- **Refresh Tokens**: Para mantener sesiones activas sin interrupciones.
-
 ### Reconocimiento de Poses
 - **Google ML Kit Pose Detection API**: Utilizado para analizar posturas corporales en tiempo real y proporcionar feedback inmediato sobre la técnica de los ejercicios.
 
 ## 📅 Características Principales
-- **CustomCalendar**: Componente personalizado que permite visualizar y gestionar eventos en un calendario interactivo.
+- **Calendar**: Componente personalizado que permite visualizar y gestionar eventos en un calendario interactivo.
 - **Historial de Actividades**: Registro detallado de las sesiones de entrenamiento.
 - **Reconocimiento de Ejercicios**: Análisis en tiempo real de posturas utilizando Google ML Kit Pose Detection API.
 - **Seguimiento y Progreso**: Visualización de estadísticas y gráficos interactivos que muestran el progreso del usuario.
