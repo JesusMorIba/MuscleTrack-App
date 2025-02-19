@@ -1,23 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:muscle_track/core/core.dart';
+import 'package:muscle_track/features/home/presentation/ui/widget/detector_content.dart';
 import 'package:muscle_track/features/home/presentation/ui/widget/history_content.dart';
 import 'package:muscle_track/features/home/presentation/ui/widget/home_content.dart';
 
-class HomeScreen extends ConsumerStatefulWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
     const HomeContent(),
-    const Center(child: Text('Discover Page')),
+    DetectorContent(),
     const Center(child: Text('Report Page')),
     const HistoryContent(),
     const Center(child: Text('Settings Page')),
@@ -75,13 +80,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
-                'assets/icons/discover.svg',
+                'assets/icons/pose_detection.svg',
                 height: 24,
                 colorFilter: _currentIndex == 1
                     ? const ColorFilter.mode(AppColors.primary, BlendMode.srcIn)
                     : const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
               ),
-              label: 'Discover',
+              label: 'Detector',
             ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset(

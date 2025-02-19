@@ -1,177 +1,152 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:muscle_track/common/common.dart';
+import 'package:muscle_track/common/widgets/custom_exercise_card.dart';
+import 'package:muscle_track/common/widgets/custom_workout_detail_card.dart';
+import 'package:muscle_track/core/core.dart';
+import 'package:muscle_track/core/router/app_router_const.dart';
+import 'package:muscle_track/features/workout_detail/presentation/provider/workout_detail_provider.dart';
+import 'package:muscle_track/features/workout_detail/presentation/state/workout_detail_state.dart';
 
-class WorkoutDetailList extends StatelessWidget {
+class WorkoutDetailList extends ConsumerWidget {
   const WorkoutDetailList({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final workout = ref.watch(workoutDetailProvider);
+
+    if (workout.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (workout.event == WorkoutDetailEvent.error) {
+      return Center(
+        child: Text(
+          'Error: ${workout.error}',
+          style: const TextStyle(fontSize: 18),
+        ),
+      );
+    }
+
+    if (workout.workoutDetailResponse == null) {
+      return const Center(
+        child: Text('No workout data available.'),
+      );
+    }
+
     return Scaffold(
       body: Column(
         children: [
           Stack(
+            alignment: AlignmentDirectional.centerStart,
             children: [
-              Image.network(
-                'https://imgur.com/pPNGyli.png',
-                width: double.infinity,
-                height: 250,
+              CachedNetworkImage(
+                imageUrl: workout.workoutDetailResponse!.workout.cover,
                 fit: BoxFit.cover,
-              ),
-              Positioned(
-                top: 40,
-                left: 16,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
+                width: double.infinity,
+                placeholder: (context, url) => const Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.primary,
+                    strokeCap: StrokeCap.round,
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
                 ),
+                errorWidget: (context, url, error) => const Center(
+                  child: Icon(Icons.error, color: AppColors.red),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: AppColors.white,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
               ),
             ],
           ),
-
-          // Title and Description Section
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Full-Body HIIT Blast',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  workout.workoutDetailResponse!.workout.title,
+                  style: AppTextStyles.heading3(),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
-                  'Get ready for an intense full-body workout that will boost your metabolism and torch calories. This high-intensity interval training (HIIT) program is designed to increase strength and endurance.',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[700],
-                  ),
+                  workout.workoutDetailResponse!.workout.description,
+                  style:
+                      AppTextStyles.bodyLargeRegular(color: AppColors.grey700),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment
+                      .spaceEvenly, // Opcional: espacio entre los widgets
                   children: [
-                    _buildStatCard('15', 'workouts'),
-                    _buildStatCard('20', 'minutes'),
-                    _buildStatCard('250', 'kcal'),
+                    Expanded(
+                      child: CustomWorkoutDetailCard(
+                        icon: 'assets/icons/person_run.svg',
+                        value: workout
+                            .workoutDetailResponse!.workout.exercises.length
+                            .toString(),
+                        label: 'workouts',
+                      ),
+                    ),
+                    Expanded(
+                      child: CustomWorkoutDetailCard(
+                        icon: 'assets/icons/clock.svg',
+                        value: workout.workoutDetailResponse!.workout.minutes
+                            .toString(),
+                        label: 'minutes',
+                      ),
+                    ),
+                    Expanded(
+                      child: CustomWorkoutDetailCard(
+                        icon: 'assets/icons/kcal.svg',
+                        value: workout.workoutDetailResponse!.workout.kcal
+                            .toString(),
+                        label: 'kcal',
+                      ),
+                    ),
                   ],
                 ),
               ],
             ),
           ),
-
-          // Tab Section (Animation / Video)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {},
-                    child: Text('Animation', style: TextStyle(fontSize: 16)),
-                  ),
-                ),
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {},
-                    child: Text('Video', style: TextStyle(fontSize: 16)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Exercise List Section
           Expanded(
             child: ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              itemCount: exercises.length,
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              itemCount:
+                  workout.workoutDetailResponse!.workout.exercises.length,
               itemBuilder: (context, index) {
-                final exercise = exercises[index];
-                return ListTile(
-                  leading: Image.network(
-                    exercise['imageUrl']!,
-                    width: 50,
-                    height: 50,
+                final exercise =
+                    workout.workoutDetailResponse!.workout.exercises[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5.0),
+                  child: CustomExerciseCard(
+                    exercise: exercise,
                   ),
-                  title: Text(exercise['name']!),
-                  subtitle: Text(exercise['reps']!),
-                  trailing: Icon(Icons.drag_handle),
                 );
               },
             ),
           ),
-
-          // Start Button
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  'START',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
+            child: CustomElevatedButton(
+              onPressed: () {
+                context.pushNamed(exerciseDetailRoute);
+              },
+              text: 'Start',
+              size: ButtonSize.large,
             ),
           ),
         ],
       ),
     );
   }
-
-  // Helper method to build stat cards
-  Widget _buildStatCard(String value, String label) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
-        ),
-      ],
-    );
-  }
 }
-
-// Sample exercise data
-final exercises = [
-  {
-    'imageUrl': 'https://via.placeholder.com/50',
-    'name': 'Push-up',
-    'reps': 'X10',
-  },
-  {
-    'imageUrl': 'https://via.placeholder.com/50',
-    'name': 'Plank',
-    'reps': '00:40',
-  },
-  {
-    'imageUrl': 'https://via.placeholder.com/50',
-    'name': 'Leg Raises 1',
-    'reps': 'X15',
-  },
-  // Add more exercises here
-];

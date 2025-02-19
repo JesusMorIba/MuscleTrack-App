@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:muscle_track/common/common.dart';
+import 'package:muscle_track/core/router/app_router_const.dart';
 import 'package:muscle_track/core/theme/app_colors.dart';
 import 'package:muscle_track/core/theme/app_text_styles.dart';
+import 'package:muscle_track/features/home/presentation/provider/home_provider.dart';
+import 'package:muscle_track/features/home/presentation/state/home_state.dart';
 
-class HomeContent extends StatelessWidget {
+class HomeContent extends ConsumerWidget {
   const HomeContent({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final List<Map<String, String>> workoutPlans = [
-      {
-        "title": "Full-Body HIIT Blast",
-        "duration": "20 mins",
-        "level": "Intermediate",
-        "imageUrl": "daily_exercise_routine_qeyazq",
-      },
-      {
-        "title": "Daily Exercise",
-        "duration": "16 mins",
-        "level": "Beginner",
-        "imageUrl": "full_body_hiit_blast_mbol1j",
-      },
-    ];
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(homeProvider);
+
+    if (state.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (state.event == HomeEvent.error) {
+      return Center(child: Text('Error: ${state.error}'));
+    }
 
     return ListView(
       padding: const EdgeInsets.all(16.0),
@@ -57,16 +57,22 @@ class HomeContent extends StatelessWidget {
         ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: workoutPlans.length,
+          itemCount: state.workouts.length,
           itemBuilder: (context, index) {
-            final plan = workoutPlans[index];
+            final workout = state.workouts[index];
             return Column(
               children: [
-                CustomWorkoutCard(
-                  title: plan["title"] ?? "Untitled",
-                  duration: plan["duration"] ?? "Unknown",
-                  level: plan["level"] ?? "Unknown",
-                  imageId: plan["imageUrl"] ?? "",
+                InkWell(
+                  onTap: () {
+                    context.pushNamed(workoutDetailRoute,
+                        pathParameters: {'id': workout.id.toString()});
+                  },
+                  child: CustomWorkoutCard(
+                    title: workout.title,
+                    duration: workout.minutes.toString(),
+                    level: workout.level,
+                    imageUrl: workout.cover,
+                  ),
                 ),
                 const SizedBox(height: 16),
               ],

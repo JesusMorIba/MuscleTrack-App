@@ -34,7 +34,7 @@ class _SignupApi implements SignupApi {
     )
         .compose(
           _dio.options,
-          '/api/v1/auth/signup',
+          '/user/signup',
           queryParameters: queryParameters,
           data: _data,
         )

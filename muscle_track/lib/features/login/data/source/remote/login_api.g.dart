@@ -34,7 +34,7 @@ class _LoginApi implements LoginApi {
     )
         .compose(
           _dio.options,
-          '/api/v1/auth/login',
+          '/user/login',
           queryParameters: queryParameters,
           data: _data,
         )
